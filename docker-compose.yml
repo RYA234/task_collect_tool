@@ -1,0 +1,27 @@
+version: '3'
+services:
+  node:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: node-express-dev:1.0
+    tty: true
+    volumes:
+      - ./src:/src
+    ports:
+      - "8080:8000"
+  postgresql:
+    # image: postgres:11.7
+    container_name: postgresql
+    build: ./docker/postgresql 
+    environment:
+      TZ: 'Asia/Tokyo'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgresql/init:/docker-entrypoint-initdb.d
+      - ./src:/src
+      - db-data:/var/lib/postgresql/data
