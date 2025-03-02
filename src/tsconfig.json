@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+//   "include": ["src/**/*.ts"],
+//   "exclude": ["node_modules"]
+  }

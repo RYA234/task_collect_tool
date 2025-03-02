@@ -1,27 +1,49 @@
 version: '3'
 services:
-  node:
+  node_task:
     build: 
       context: .
-      dockerfile: Dockerfile
-    image: node-express-dev:1.0
+      dockerfile: ./docker/node/Dockerfile
+    environment:
+      HIBITICA_USER_ID: ${HIBITICA_USER_ID}
+      HIBITICA_API_KEY: ${HIBITICA_API_KEY}
+
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
     tty: true
     volumes:
       - ./src:/src
+    working_dir: /src
     ports:
       - "8080:8000"
-  postgresql:
-    # image: postgres:11.7
-    container_name: postgresql
+    networks:
+       task_network:
+
+  postgre_task:
+    container_name: postgre_task
     build: ./docker/postgresql 
     environment:
       TZ: 'Asia/Tokyo'
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      # PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
       - ./docker/postgresql/init:/docker-entrypoint-initdb.d
       - ./src:/src
-      - db-data:/var/lib/postgresql/data
+      - task-collect-db-data:/var/lib/postgresql/data
+    working_dir: /src
+    networks:
+       task_network:
+          ipv4_address: 172.25.1.89
+networks:
+  task_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.1.0/24
+volumes:
+  task-collect-db-data:
